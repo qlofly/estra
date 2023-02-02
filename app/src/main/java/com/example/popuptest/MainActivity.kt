@@ -15,7 +15,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bindingClass : ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
         bindingClass.addAccounts.setOnClickListener {
@@ -24,12 +23,12 @@ class MainActivity : AppCompatActivity() {
         }
         bindingClass.plusMoneyButton.setOnClickListener{
             val transactionIntent = Intent(this@MainActivity, CreateTransaction::class.java)
-            transactionIntent.putExtra("plainText", "plus button")
+            transactionIntent.putExtra("cmd", "income")
             startActivity(transactionIntent)
         }
         bindingClass.minusMoneyButton.setOnClickListener{
             val transactionIntent = Intent(this@MainActivity, CreateTransaction::class.java)
-            transactionIntent.putExtra("plainText", "min button")
+            transactionIntent.putExtra("cmd", "spending")
             startActivity(transactionIntent)
         }
 

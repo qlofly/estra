@@ -28,6 +28,7 @@
         <activity android:name="com.example.popuptest.AddAccounts" />
         <activity android:name="com.example.popuptest.CreateTransaction" />
         <activity android:name="com.example.popuptest.EditAccount" />
+        <activity android:name="com.example.popuptest.EditCategory" />
     </application>
 
 </manifest>

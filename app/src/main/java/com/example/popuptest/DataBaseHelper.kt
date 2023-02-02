@@ -24,10 +24,10 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 + ID_COL + " INTEGER PRIMARY KEY, " +
                 NAME_ACCOUNTS_COl + " TEXT," +
                 ACCOUNTS_AMOUNT_COL + " TEXT" + ")")
-        val thirdQuery = ("CREATE TABLE " + CATIGORIES_TABLE_NAME + " ("
+        val thirdQuery = ("CREATE TABLE " + CATEGORIES_TABLE_NAME + " ("
                 + ID_COL + " INTEGER PRIMARY KEY, " +
-                SPENDING_COL + " TEXT," +
-                INCOME_COL + " TEXT" + ")")
+                TYPE_COL + " TEXT," +
+                NAME_CATEG_COL + " TEXT" + ")")
 
         db.execSQL(firstQuery)
         db.execSQL(secondQuery)
@@ -38,36 +38,38 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         //  check if table already exists
         db.execSQL("DROP TABLE IF EXISTS " + ACCOUNTS_TABLE_NAME)
         onCreate(db)
+
     }
 
-    fun addAccount(nameAccount : String, amountAccount : String){
+    fun addAccount(nameAccount: String, amountAccount: String) {
 
         val values = ContentValues()
         values.put(NAME_ACCOUNTS_COl, nameAccount)
         values.put(ACCOUNTS_AMOUNT_COL, amountAccount)
         val db = this.writableDatabase
         db.insert(ACCOUNTS_TABLE_NAME, null, values)
-        db.close()
     }
 
     fun getMaxData(): Cursor? {
-
         val db = this.readableDatabase
-        return db.rawQuery("SELECT name_accounts, amount_money FROM "+ ACCOUNTS_TABLE_NAME +" WHERE ID =(SELECT MAX(ID)  FROM "+ ACCOUNTS_TABLE_NAME+")", null)
-
+        return db.rawQuery(
+            "SELECT name_accounts, amount_money FROM " + ACCOUNTS_TABLE_NAME + " WHERE ID =(SELECT MAX(ID)  FROM " + ACCOUNTS_TABLE_NAME + ")",
+            null
+        )
     }
 
-    fun updateAccountData(oldName: String, updName: String, updAmount: String){
+    fun updateAccountData(oldName: String, updName: String, updAmount: String) {
         val db = this.readableDatabase
         db.execSQL("UPDATE $ACCOUNTS_TABLE_NAME SET $ACCOUNTS_AMOUNT_COL = '$updAmount', $NAME_ACCOUNTS_COl = '$updName' WHERE $NAME_ACCOUNTS_COl = '$oldName'")
     }
 
-    fun deleteAccountData(nameAccount: String){
+    fun deleteAccountData(nameAccount: String) {
         val db = this.readableDatabase
         db.execSQL("DELETE FROM $ACCOUNTS_TABLE_NAME  WHERE $NAME_ACCOUNTS_COl = '$nameAccount'")
     }
+
     @SuppressLint("Recycle")
-    fun getGlobalAmount(): String{
+    fun getGlobalAmount(): String {
         val db = this.readableDatabase
         val query = db.rawQuery("SELECT amount_money FROM " + ACCOUNTS_TABLE_NAME, null)
         var amount = 0.00
@@ -83,19 +85,59 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     @SuppressLint("Recycle")
-    fun getNameAmount(): MutableList<String>{
+    fun getNameAmount(): MutableList<String> {
         val db = this.readableDatabase
-        val query = db.rawQuery("SELECT name_accounts,amount_money  FROM " + ACCOUNTS_TABLE_NAME, null)
+        val query =
+            db.rawQuery("SELECT name_accounts,amount_money  FROM " + ACCOUNTS_TABLE_NAME, null)
         val data = mutableListOf<String>()
 
         while (query.moveToNext()) {
             val name = query.getString(query.getColumnIndexOrThrow(NAME_ACCOUNTS_COl))
             val count = query.getString(query.getColumnIndexOrThrow(ACCOUNTS_AMOUNT_COL))
-            data.add( count +"\n\n\n" + name)
+            data.add(count + "\n\n\n" + name)
         }
-        db.close()
         return data
     }
+
+    //Передавать в тип "spending" - затраты, "income" - пополнения
+    //изменить запись под новую структуру бд
+    fun writeCategories(categoriesType: String, categiroesName: String){
+        val db = this.writableDatabase
+        db.execSQL("INSERT INTO $CATEGORIES_TABLE_NAME($TYPE_COL, $NAME_CATEG_COL) VALUES ('$categoriesType', '$categiroesName')")
+        db.close()
+    }
+    fun updateCategories(categiroesName: String,
+                         categiroesType: String,
+                         categoriesNewName: String){
+        val db = this.writableDatabase
+        //изменить запись под новую структуру бд
+        db.execSQL("UPDATE  $CATEGORIES_TABLE_NAME SET '$categiroesType' = '$categoriesNewName' WHERE '$categiroesType' = '$categiroesName'")
+    }
+    fun deleteCategories(categiroesName: String,
+                         categiroesType: String){
+        val db = this.writableDatabase
+        db.execSQL("DELETE FROM $CATEGORIES_TABLE_NAME WHERE $TYPE_COL = '$categiroesType' AND $NAME_CATEG_COL = '$categiroesName'")
+    }
+    fun getallCaterogies(categiroesType: String): MutableList<String> {
+        val db = this.writableDatabase
+        val data = mutableListOf<String>()
+        val query = db.rawQuery("SELECT * FROM $CATEGORIES_TABLE_NAME WHERE $TYPE_COL = '$categiroesType'", null)
+            //где-то тут косяк в получении данных
+        Log.d("QueryTEST", query.toString())
+            try {
+            while (query.moveToNext()) {
+                val name = query.getString(query.getColumnIndexOrThrow(NAME_CATEG_COL))
+                if (name != null){
+                    data.add(name)
+                }
+
+            }
+        } catch (e: Exception){
+            Log.d("ERROR MESSAGE", e.toString())
+        }
+        return data
+    }
+
 
 
 
@@ -104,8 +146,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         private val DATABASE_VERSION = 1
 
-        val  ACCOUNTS_TABLE_NAME = "accounts_table"
-        val  TRANSACTION_TABLE_NAME = "transactions_table"
+        val ACCOUNTS_TABLE_NAME = "accounts_table"
+        val TRANSACTION_TABLE_NAME = "transactions_table"
         val ID_COL = "id"
 
         val DATE_TIME_TRANSACTION = "datetime_transaction"
@@ -116,8 +158,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val NAME_ACCOUNTS_COl = "name_accounts"
         val ACCOUNTS_AMOUNT_COL = "amount_money"
 
-        val CATIGORIES_TABLE_NAME = "categories"
-        val INCOME_COL = "income"
-        val SPENDING_COL = "spending"
+        val CATEGORIES_TABLE_NAME = "categories"
+        val TYPE_COL = "type"
+        val NAME_CATEG_COL = "name"
     }
 }
