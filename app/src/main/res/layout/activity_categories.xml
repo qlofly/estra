@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<!--    Все равно загуглить ка квставлять два элемента в лейаут прокрутки(чтобы можно было удалять категории-->
-
     <EditText
         android:id="@+id/categoriesNameText"
         android:layout_width="0dp"
@@ -40,8 +38,43 @@
         android:layout_width="409dp"
         android:layout_height="661dp"
         android:orientation="vertical"
+        android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/categoriesNameText"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="1dp" />
+        tools:layout_editor_absoluteX="1dp">
+
+        <LinearLayout
+            android:id="@+id/exampleLinearCat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingEnd="5dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="219dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape"
+                android:gravity="center"
+                android:text="del"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

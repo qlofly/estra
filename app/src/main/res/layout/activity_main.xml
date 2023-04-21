@@ -79,7 +79,7 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/scrollView2"
         android:layout_width="0dp"
         android:layout_height="354dp"
@@ -96,14 +96,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addAccounts"
         app:layout_constraintVertical_bias="1.0"
-        tools:ignore="NotSibling">
-
-        <LinearLayout
-            android:id="@+id/linear_layout_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+        tools:ignore="NotSibling" />
 
     <Button
         android:id="@+id/plusMoneyButton"

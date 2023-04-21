@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import com.example.popuptest.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
     private lateinit var bindingClass : ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +33,6 @@ class MainActivity : AppCompatActivity() {
             transactionIntent.putExtra("cmd", "spending")
             startActivity(transactionIntent)
         }
-
-
     }
 
     @SuppressLint("Range")
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 button.background = bindingClass.addAccounts.background
                 button.layoutParams = bindingClass.addAccounts.layoutParams
                 button.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
-                button.setPadding(50, 0,0,0)
+                button.setPadding(50, 0,50,0)
 
                 button.setOnClickListener{
                     val intentEditAccount = Intent(this@MainActivity, EditAccount::class.java)
@@ -62,14 +62,17 @@ class MainActivity : AppCompatActivity() {
                 cursor.close()
             }
             bindingClass.linearLayout.addView(bindingClass.addAccounts)
+            val allTransactions = db.getAllTransactions()
+            Log.d("TEST", allTransactions.toString())
         } catch (e: Exception){
             Log.d("ERROR MESSAGE", e.toString())
         }
+//        binding = ActivityMainBinding.inflate(layoutInflater)
+//        setContentView(binding.root)
         bindingClass.amount.text = db.getGlobalAmount()
-
         Log.d("Fragment1", "onResume")
-        //update count money with databases
-        //update all elements
+//        //update count money with databases
+//        //update all elements
     }
 
 }

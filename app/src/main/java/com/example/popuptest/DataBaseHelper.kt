@@ -19,7 +19,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 DATE_TIME_TRANSACTION + " TEXT," +
                 ACCOUNT_TRANSACTION + " TEXT," +
                 AMOUNT_TRANSACTION + " TEXT," +
-                CATEGORIES_TRANSACTION + " TEXT" + ")")
+                CATEGORIES_TRANSACTION + " TEXT," +
+                COMMENT_TRANSACTION + " TEXT" + ")")
         val secondQuery = ("CREATE TABLE " + ACCOUNTS_TABLE_NAME + " ("
                 + ID_COL + " INTEGER PRIMARY KEY, " +
                 NAME_ACCOUNTS_COl + " TEXT," +
@@ -28,7 +29,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 + ID_COL + " INTEGER PRIMARY KEY, " +
                 TYPE_COL + " TEXT," +
                 NAME_CATEG_COL + " TEXT" + ")")
-
         db.execSQL(firstQuery)
         db.execSQL(secondQuery)
         db.execSQL(thirdQuery)
@@ -75,7 +75,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         var amount = 0.00
 
         while (query.moveToNext()) {
-            Log.d("AMOUNTEST", amount.toString())
             val countMoney = query.getString(query.getColumnIndexOrThrow(ACCOUNTS_AMOUNT_COL))
             amount += countMoney.toDouble()
         }
@@ -99,19 +98,24 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return data
     }
 
+    fun getAllNameAccounts(): MutableList<String> {
+        val db = this.readableDatabase
+        val query =
+            db.rawQuery("SELECT name_accounts  FROM " + ACCOUNTS_TABLE_NAME, null)
+        val data = mutableListOf<String>()
+        while (query.moveToNext()) {
+            val name = query.getString(query.getColumnIndexOrThrow(NAME_ACCOUNTS_COl))
+            data.add(name)
+        }
+        return data
+    }
+
     //Передавать в тип "spending" - затраты, "income" - пополнения
     //изменить запись под новую структуру бд
     fun writeCategories(categoriesType: String, categiroesName: String){
         val db = this.writableDatabase
         db.execSQL("INSERT INTO $CATEGORIES_TABLE_NAME($TYPE_COL, $NAME_CATEG_COL) VALUES ('$categoriesType', '$categiroesName')")
         db.close()
-    }
-    fun updateCategories(categiroesName: String,
-                         categiroesType: String,
-                         categoriesNewName: String){
-        val db = this.writableDatabase
-        //изменить запись под новую структуру бд
-        db.execSQL("UPDATE  $CATEGORIES_TABLE_NAME SET '$categiroesType' = '$categoriesNewName' WHERE '$categiroesType' = '$categiroesName'")
     }
     fun deleteCategories(categiroesName: String,
                          categiroesType: String){
@@ -122,13 +126,43 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val db = this.writableDatabase
         val data = mutableListOf<String>()
         val query = db.rawQuery("SELECT * FROM $CATEGORIES_TABLE_NAME WHERE $TYPE_COL = '$categiroesType'", null)
-            //где-то тут косяк в получении данных
-        Log.d("QueryTEST", query.toString())
-            try {
+        try {
             while (query.moveToNext()) {
                 val name = query.getString(query.getColumnIndexOrThrow(NAME_CATEG_COL))
                 if (name != null){
                     data.add(name)
+                }
+
+            }
+        } catch (e: Exception){
+            Log.d("ERROR MESSAGE", e.toString())
+        }
+        return data
+    }
+
+    fun createTransaction(transactionData: Array<String>){
+        val db = this.readableDatabase
+        val values = ContentValues()
+        values.put(DATE_TIME_TRANSACTION, transactionData[0])
+        values.put(ACCOUNT_TRANSACTION, transactionData[1])
+        values.put(AMOUNT_TRANSACTION, transactionData[2])
+        values.put(CATEGORIES_TRANSACTION, transactionData[3])
+        values.put(COMMENT_TRANSACTION, transactionData[4])
+        db.insert(TRANSACTION_TABLE_NAME, null, values)
+    }
+
+    fun getAllTransactions(): ArrayList<String> {
+        val db = this.readableDatabase
+        val allTransactions = mutableListOf<String>()
+        val data = ArrayList<String>()
+        val query = db.rawQuery("SELECT * FROM $TRANSACTION_TABLE_NAME", null)
+        try {
+            while (query.moveToNext()) {
+                for (i in 0 until query.columnCount) {
+                    data.add(query.getString(i))
+                }
+                if (data.isNotEmpty()){
+                    allTransactions.add(data.toString())
                 }
 
             }
@@ -151,9 +185,10 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val ID_COL = "id"
 
         val DATE_TIME_TRANSACTION = "datetime_transaction"
-        val CATEGORIES_TRANSACTION = "catigories_transaction"
+        val CATEGORIES_TRANSACTION = "categories_transaction"
         val AMOUNT_TRANSACTION = "amount_transaction"
         val ACCOUNT_TRANSACTION = "account_transaction"
+        val COMMENT_TRANSACTION = "comment_transaction"
 
         val NAME_ACCOUNTS_COl = "name_accounts"
         val ACCOUNTS_AMOUNT_COL = "amount_money"

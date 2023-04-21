@@ -21,7 +21,7 @@
     <EditText
         android:id="@+id/nameInput"
         android:layout_width="match_parent"
-        android:layout_height="51dp"
+        android:layout_height="52dp"
         android:background="@drawable/shape"
         android:ems="10"
         android:gravity="center_vertical"
@@ -45,7 +45,7 @@
     <EditText
         android:id="@+id/amountInput"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="52dp"
         android:background="@drawable/shape"
         android:ems="10"
         android:gravity="center_vertical"
