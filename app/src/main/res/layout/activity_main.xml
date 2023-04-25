@@ -49,7 +49,7 @@
         app:flow_verticalAlign="top"
         app:layout_constraintBaseline_toBottomOf="parent"
         app:layout_constraintBaseline_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+        app:layout_constraintBottom_toTopOf="@+id/recycleView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.457"
         app:layout_constraintStart_toStartOf="parent">
@@ -80,7 +80,7 @@
     </HorizontalScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/scrollView2"
+        android:id="@+id/recycleView"
         android:layout_width="0dp"
         android:layout_height="354dp"
         android:layout_marginLeft="10dp"
@@ -127,7 +127,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/plusMoneyButton"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
+        app:layout_constraintTop_toBottomOf="@+id/recycleView"
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="NotSibling" />
 

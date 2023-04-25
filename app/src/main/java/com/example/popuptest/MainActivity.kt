@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.popuptest.databinding.ActivityMainBinding
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -62,13 +65,24 @@ class MainActivity : AppCompatActivity() {
                 cursor.close()
             }
             bindingClass.linearLayout.addView(bindingClass.addAccounts)
-            val allTransactions = db.getAllTransactions()
-            Log.d("TEST", allTransactions.toString())
         } catch (e: Exception){
             Log.d("ERROR MESSAGE", e.toString())
         }
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
+
+        val recyclerview = findViewById<RecyclerView>(R.id.recycleView)
+
+        // this creates a vertical layout Manager
+        recyclerview.layoutManager = LinearLayoutManager(this)
+
+        // ArrayList of class ItemsViewModel
+        val data = db.getAllTransactions()
+
+        // This will pass the ArrayList to our Adapter
+        val adapter = TransactionAdapter(data)
+
+        // Setting the Adapter with the recyclerview
+        recyclerview.adapter = adapter
+
         bindingClass.amount.text = db.getGlobalAmount()
         Log.d("Fragment1", "onResume")
 //        //update count money with databases

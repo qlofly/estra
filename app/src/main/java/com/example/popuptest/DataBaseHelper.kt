@@ -150,27 +150,46 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         values.put(COMMENT_TRANSACTION, transactionData[4])
         db.insert(TRANSACTION_TABLE_NAME, null, values)
     }
-
-    fun getAllTransactions(): ArrayList<String> {
+    class Transaction(val date: String, val category: String, val amount: String)
+    fun getAllTransactions(): ArrayList<Transaction> {
         val db = this.readableDatabase
-        val allTransactions = mutableListOf<String>()
-        val data = ArrayList<String>()
-        val query = db.rawQuery("SELECT * FROM $TRANSACTION_TABLE_NAME", null)
+        val transactionsList = ArrayList<Transaction>()
+        val query = db.rawQuery("SELECT $DATE_TIME_TRANSACTION, $CATEGORIES_TRANSACTION, $AMOUNT_TRANSACTION FROM $TRANSACTION_TABLE_NAME", null)
         try {
             while (query.moveToNext()) {
-                for (i in 0 until query.columnCount) {
-                    data.add(query.getString(i))
-                }
-                if (data.isNotEmpty()){
-                    allTransactions.add(data.toString())
-                }
-
+                val date = query.getString(0)
+                val category = query.getString(1)
+                val amount = query.getString(2)
+                transactionsList.add(Transaction(date, category, amount))
             }
         } catch (e: Exception){
             Log.d("ERROR MESSAGE", e.toString())
+        } finally {
+            query.close()
+            db.close()
         }
-        return data
+        return transactionsList
     }
+//    fun getAllTransactions(): ArrayList<String> {
+//        val db = this.readableDatabase
+//        val allTransactions = mutableListOf<String>()
+//        val data = ArrayList<String>()
+//        val query = db.rawQuery("SELECT * FROM $TRANSACTION_TABLE_NAME", null)
+//        try {
+//            while (query.moveToNext()) {
+//                for (i in 0 until query.columnCount) {
+//                    data.add(query.getString(i))
+//                }
+//                if (data.isNotEmpty()){
+//                    allTransactions.add(data.toString())
+//                }
+//
+//            }
+//        } catch (e: Exception){
+//            Log.d("ERROR MESSAGE", e.toString())
+//        }
+//        return data
+//    }
 
 
 
