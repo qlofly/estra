@@ -156,13 +156,22 @@ class CreateTransaction : Activity() {
             //сохранять все данные из полей и выходить обратно
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm")
             val currentDate = sdf.format(Date())
+            val incomeCount = db.getAmountFromAccountName(selectedAccount) + transactionBinding.amountText.text.toString().toInt()
+            val spendingCount = db.getAmountFromAccountName(selectedAccount) - transactionBinding.amountText.text.toString().toInt()
+            val updateAccountMoney = when(getData.toString()) {
+                "income" -> db.updateAccountData(selectedAccount, selectedAccount, incomeCount.toString())
+                "spending" -> db.updateAccountData(selectedAccount, selectedAccount, spendingCount.toString())
+                else -> 0
+            }
             val transactionData = arrayOf(
                 currentDate,
                 selectedAccount,
                 transactionBinding.amountText.text.toString(),
                 selectedCategory,
-                transactionBinding.commentText.text.toString()
+                transactionBinding.commentText.text.toString(),
+                updateAccountMoney.toString()
             )
+            Log.d("GET TRANS VALUE", getData.toString())
             db.createTransaction(transactionData)
             Toast.makeText(this, "Transaction created", Toast.LENGTH_LONG).show()
 //            Log.d("MONEY", transactionBinding.amountText.text.toString())

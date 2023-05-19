@@ -20,6 +20,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 ACCOUNT_TRANSACTION + " TEXT," +
                 AMOUNT_TRANSACTION + " TEXT," +
                 CATEGORIES_TRANSACTION + " TEXT," +
+                TYPE_TRANSACTION + " TEXT," +
                 COMMENT_TRANSACTION + " TEXT" + ")")
         val secondQuery = ("CREATE TABLE " + ACCOUNTS_TABLE_NAME + " ("
                 + ID_COL + " INTEGER PRIMARY KEY, " +
@@ -98,6 +99,14 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return data
     }
 
+    fun getAmountFromAccountName(accName: String): Int {
+        val db = this.readableDatabase
+        val query =
+            db.rawQuery("SELECT amount_money  FROM $ACCOUNTS_TABLE_NAME WHERE name_accounts=?", arrayOf(accName))
+        query.moveToFirst()
+        return query.getInt(0)
+    }
+
     fun getAllNameAccounts(): MutableList<String> {
         val db = this.readableDatabase
         val query =
@@ -141,6 +150,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     fun createTransaction(transactionData: Array<String>){
+        //при записи в базу данных отнимать/добавлять число от счёта с которым транзакция
         val db = this.readableDatabase
         val values = ContentValues()
         values.put(DATE_TIME_TRANSACTION, transactionData[0])
@@ -148,6 +158,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         values.put(AMOUNT_TRANSACTION, transactionData[2])
         values.put(CATEGORIES_TRANSACTION, transactionData[3])
         values.put(COMMENT_TRANSACTION, transactionData[4])
+        values.put(ACCOUNTS_AMOUNT_COL, transactionData[5])
         db.insert(TRANSACTION_TABLE_NAME, null, values)
     }
     class Transaction(val date: String, val category: String, val amount: String)
@@ -207,6 +218,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val CATEGORIES_TRANSACTION = "categories_transaction"
         val AMOUNT_TRANSACTION = "amount_transaction"
         val ACCOUNT_TRANSACTION = "account_transaction"
+        val TYPE_TRANSACTION = "type_transaction"
         val COMMENT_TRANSACTION = "comment_transaction"
 
         val NAME_ACCOUNTS_COl = "name_accounts"
